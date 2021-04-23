@@ -9,6 +9,7 @@ from yolov3_tf2.models import (
 from yolov3_tf2.dataset import transform_images, load_tfrecord_dataset
 from yolov3_tf2.utils import draw_outputs
 from flask import Flask, request, Response, jsonify, send_from_directory, abort
+from flask_cors import CORS, cross_origin
 import os
 
 # customize your API through the following parameters
@@ -37,6 +38,7 @@ print('classes loaded')
 
 # Initialize Flask application
 app = Flask(__name__)
+CORS(app)
 
 # API that returns JSON with classes found in images
 @app.route('/detections', methods=['POST'])
@@ -98,12 +100,13 @@ def get_detections():
 
 # API that returns image with detections on it
 @app.route('/image', methods= ['POST'])
+@cross_origin()
 def get_image():
+    print(request.files["images"])
     image = request.files["images"]
     image_name = image.filename
     image.save(os.path.join(os.getcwd(), image_name))
-    img_raw = tf.image.decode_image(
-        open(image_name, 'rb').read(), channels=3)
+    img_raw = tf.image.decode_image(open(image_name, 'rb').read(), channels=3)
     img = tf.expand_dims(img_raw, 0)
     img = transform_images(img, size)
 
@@ -113,10 +116,10 @@ def get_image():
     print('time: {}'.format(t2 - t1))
 
     print('detections:')
-    for i in range(nums[0]):
-        print('\t{}, {}, {}'.format(class_names[int(classes[0][i])],
-                                        np.array(scores[0][i]),
-                                        np.array(boxes[0][i])))
+    #for i in range(nums[0]):
+    #    print('\t{}, {}, {}'.format(class_names[int(classes[0][i])],
+    #                                    np.array(scores[0][i]),
+    #                                    np.array(boxes[0][i])))
     img = cv2.cvtColor(img_raw.numpy(), cv2.COLOR_RGB2BGR)
     img = draw_outputs(img, (boxes, scores, classes, nums), class_names)
     cv2.imwrite(output_path + 'detection.jpg', img)
@@ -124,7 +127,7 @@ def get_image():
     
     # prepare image for response
     _, img_encoded = cv2.imencode('.png', img)
-    response = img_encoded.tostring()
+    response = img_encoded.tobytes()
     
     #remove temporary image
     os.remove(image_name)
@@ -133,5 +136,6 @@ def get_image():
         return Response(response=response, status=200, mimetype='image/png')
     except FileNotFoundError:
         abort(404)
+
 if __name__ == '__main__':
     app.run(debug=True, host = '0.0.0.0', port=5000)
