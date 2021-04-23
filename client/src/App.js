@@ -5,7 +5,7 @@ import Spinner from './components/Spinner';
 import Images from './components/Images';
 import Buttons from './components/Buttons';
 import Header from './components/Header';
-//import { API_URL } from './config';
+//require('dotenv').config();
 import './App.css';
 
 class App extends Component {
@@ -15,43 +15,28 @@ class App extends Component {
   }
 
   onChange = e => {
-    //if(event.target.files && event.target.files[0]) {
-    //  this.setState({
-    //    image: URL.createObjectURL(event.target.files[0])
-    //  });
-    // }
-    const files = Array.from(e.target.files).map(image => {
-      return URL.createObjectURL(image);
-    })  
+    const apiEndpoint = process.env.API_URL || "http://localhost:5000";
     this.setState({ uploading: true })
 
     const formData = new FormData()
-
-    files.forEach((file, i) => {
-      console.log(i)
-      formData.append(i, file)
-    })
-
-    // temporary fix
-    setTimeout(() => {
-      this.setState({
-        uploading: false,
-        images: files,
-      })
-    }, 3000)
+    formData.append("images", e.target.files[0])
 
     // USE WITH BACKEND
-    //fetch(`${API_URL}/image-upload`, {
-    //  method: 'POST',
-    //  body: formData
-    //})
-    //.then(res => res.json())
-    //.then(images => {
-    //  this.setState({
-    //    uploading: false,
-    //    images
-    //  })
-    //})
+    fetch(`${apiEndpoint}/image`, {
+      method: 'POST',
+      body: formData,
+    })
+    .then(res => res.blob())
+    .then(blob => blob.arrayBuffer())
+    .then(arrayBuffer => {
+      const blob = new Blob([arrayBuffer]);
+      const img = URL.createObjectURL(blob);
+
+      this.setState({
+        uploading: false,
+        images: [img]
+      })
+    })
   }
 
   removeImage = id => {
