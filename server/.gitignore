@@ -2,6 +2,7 @@
 /detections
 *.weights
 *.tar
+*.tf*
 *.tfrecord
 checkpoint
 /checkpoints/*
