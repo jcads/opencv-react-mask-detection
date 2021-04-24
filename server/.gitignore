@@ -1,8 +1,8 @@
 *.h5
+/detections
 *.weights
 *.tar
 *.tfrecord
-*.tf*
 checkpoint
 /checkpoints/*
 /serving/*
