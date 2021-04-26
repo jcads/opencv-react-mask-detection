@@ -4,7 +4,7 @@ import { faImage, faImages } from '@fortawesome/free-solid-svg-icons'
 
 function Buttons(props) {
   return (
-    <div className='buttons fadein'>
+    <div className='buttons fadein flex-item'>
       <div className='button'>
         <label htmlFor='single'>
           <FontAwesomeIcon icon={faImage} color='#3B5998' size='10x' />

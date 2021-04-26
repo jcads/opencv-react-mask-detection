@@ -25,11 +25,41 @@ header {
   align-items: center;
   justify-content: space-around;
   flex-wrap: wrap;
-  height: 75vh
+  flex-flow: column;
+
+  padding: 3rem 0;
+
+  flex: 1 1 30%;
+}
+
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
+.container > * {
+  border: 1px solid gray;
+  border-radius: 5px;
+  margin: 3rem;
+}
+
+.content {
+  display: flex;
+  height: 25rem;
+
+  flex: 1 1 50%;
 }
 
 .button {
   margin: 0 10vw
+}
+
+img {
+  height: 20rem;
+  display: block;
+  margin: auto;
 }
 
 footer svg, .button svg, .delete svg {
@@ -64,6 +94,7 @@ input[type=file] {
 /* Animations */
 .fadein {
   animation: fadein 2s;
+  width: 100%;
 }
 
 @keyframes fadein {
@@ -77,6 +108,8 @@ input[type=file] {
 
 .spinner {
   animation: spin 1.2s infinite linear;
+  width: min-content;
+  margin: auto;
 }
 
 .spinner svg {

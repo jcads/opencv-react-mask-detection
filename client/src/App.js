@@ -10,7 +10,7 @@ import './App.css';
 
 class App extends Component {
   state = {
-    uploading: false,
+    uploading: true,
     images: []
   }
 
@@ -34,7 +34,7 @@ class App extends Component {
 
       this.setState({
         uploading: false,
-        images: [img]
+        images: [...this.state.images, img]
       })
     })
   }
@@ -55,19 +55,23 @@ class App extends Component {
         case images.length > 0:
           return <Images images={images} removeImage={this.removeImage} />
         default:
-          return <Buttons onChange={this.onChange} />
+          return <div>Upload a file</div>
       }
     }
 
     return (
       <div>
         <Header />
-        <div className='buttons'>
-          {content()}
+        <div className='container'>
+          <Buttons onChange={this.onChange} />
+          <div className="content">
+            {content()}
+          </div>
         </div>
       </div>
     )
   }
 }
+
 
 export default App;
